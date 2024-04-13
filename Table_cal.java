@@ -1,35 +1,36 @@
-package com.example.compoundtext;
+package com.example.myapplication;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Table_cal extends AppCompatActivity {
 
-    EditText edtNum1, edtNum2;
-//    Button btn0,btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9;
-
+    EditText edtNum1;
     Button[] butNumbers = new Button[10];
     int numbersIDs[] = {R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9};
-    Button btnPlus, btnSub, btnMul, btnDiv, btnMod;
-    TextView txtResult;
+    Button btnPlus, btnSub, btnMul, btnDiv, btnMod, btnResult, btnReset;
 
-    String snum1, snum2;
+    List<Integer> numbers = new ArrayList<>(); // 값 저장
+    String strbtn = ""; //연산자 값 저장
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_cal);
-        setTitle("간단계산기_테이블");
+        setTitle("진짜 계산기");
 
         edtNum1 = findViewById(R.id.edtNum1);
-        edtNum2 = findViewById(R.id.edtNum2);
+
 
         for (int i = 0; i < 10; i++) {
             butNumbers[i] = findViewById(numbersIDs[i]);
@@ -41,7 +42,10 @@ public class Table_cal extends AppCompatActivity {
         btnDiv = findViewById(R.id.btnDiv);
         btnMod = findViewById(R.id.btnMod);
 
-        txtResult = findViewById(R.id.txtResult);
+        btnResult = findViewById(R.id.btnResult);
+        btnReset = findViewById(R.id.btnReset);
+
+
         /** 누른 버튼 값 에디트텍스에 출력하기  !지역변수는 접근할수 없다! 그래서 final **/
 
         for (int i = 0; i < butNumbers.length; i++) {
@@ -51,12 +55,11 @@ public class Table_cal extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (edtNum1.isFocused()) {
-                        snum1 = edtNum1.getText().toString() + butNumbers[index].getText().toString();
-                        edtNum1.setText(snum1);
+                        String inputText = edtNum1.getText().toString() + butNumbers[index].getText().toString();
+                        if (!inputText.isEmpty()) {
+                            edtNum1.setText(inputText);
 
-                    } else if (edtNum2.isFocused()) {
-                        snum2 = edtNum2.getText().toString() + butNumbers[index].getText().toString();
-                        edtNum2.setText(snum2);
+                        }
                     } else {
                         Toast.makeText(Table_cal.this, "입력할 곳에 커서를 두세요", Toast.LENGTH_SHORT).show();
                     }
@@ -65,44 +68,135 @@ public class Table_cal extends AppCompatActivity {
             });
         }
 
-        btnPlus.setOnClickListener(new MycalListener());
-        btnSub.setOnClickListener(new MycalListener());
-        btnMul.setOnClickListener(new MycalListener());
-        btnDiv.setOnClickListener(new MycalListener());
-        btnMod.setOnClickListener(new MycalListener());
+        btnPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strbtn = btnPlus.getText().toString();
+                inputNum();
+
+            }
+        });
+        btnSub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strbtn = btnSub.getText().toString();
+                inputNum();
+            }
+        });
+        btnMul.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strbtn = btnMul.getText().toString();
+                inputNum();
+            }
+        });
+        btnDiv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strbtn = btnDiv.getText().toString();
+                inputNum();
+            }
+        });
+        btnMod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strbtn = btnMod.getText().toString();
+                inputNum();
+            }
+        });
+
+        /** 입력값 초기화 **/
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edtNum1.setText("");
+                numbers.clear();
+            }
+        });
+        /** 결과 출력 **/
+        btnResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resultPrint();
+            }
+        });
 
 
     }
 
-    class MycalListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            String snum1 = edtNum1.getText().toString();
-            String snum2 = edtNum2.getText().toString();
-            int result = 0;
+    /**
+     * 숫자 계산 로직
+     **/
+    private void resultPrint() {
+        double sum = 0;
+        if (strbtn.equals("+")) {
+            relNum();
+            for (int i = 0; i < numbers.size() - 1; i++) {
 
-            if (snum1.trim().equals("") || snum2.trim().equals("")) {
-                Toast.makeText(Table_cal.this, "값을 먼저 입력하세요", Toast.LENGTH_SHORT).show();
-            } else {
-                if (v.getId() == R.id.btnPlus) { // 더하기
-                    result = Integer.parseInt(snum1) + Integer.parseInt(snum2);
-                } else if (v.getId() == R.id.btnSub) { // 빼기
-                    result = Integer.parseInt(snum1) - Integer.parseInt(snum2);
-                } else if (v.getId() == R.id.btnMul) { // 곱하기
-                    result = Integer.parseInt(snum1) * Integer.parseInt(snum2);
-                } else if (v.getId() == R.id.btnDiv) { // 나누기
-                    result = Integer.parseInt(snum1) / Integer.parseInt(snum2);
-                } else if (v.getId() == R.id.btnMod) { // 나머지
-                    result = Integer.parseInt(snum1) % Integer.parseInt(snum2);
+                sum = numbers.get(i) + numbers.get(i + 1);
+
+            }
+
+        } else if (strbtn.equals("-")) {
+            relNum();
+            for (int i = 0; i < numbers.size() - 1; i++) {
+
+                sum = numbers.get(i) - numbers.get(i + 1);
+
+            }
+
+        } else if (strbtn.equals("*")) {
+            relNum();
+            for (int i = 0; i < numbers.size() - 1; i++) {
+                if (numbers.get(1) != 0) {
+                    sum = numbers.get(i) * numbers.get(i + 1);
                 }
-                txtResult.setText(result + "");
+            }
+
+        } else if (strbtn.equals("/")) {
+            relNum();
+            for (int i = 0; i < numbers.size() - 1; i++) {
+                if (numbers.get(1) != 0) {
+                    sum = numbers.get(i) / numbers.get(i + 1);
+                }
             }
 
 
+        } else if (strbtn.equals("%")) {
+            relNum();
+            for (int i = 0; i < numbers.size() - 1; i++) {
+                if (numbers.get(1) != 0) {
+                    sum = numbers.get(i) % numbers.get(i + 1);
+                }
+            }
+
         }
+        edtNum1.setText("합계 :" + sum);
     }
 
 
+    /**
+     * 숫자 저장 로직
+     **/
+    private void inputNum() {
+        String inputText = edtNum1.getText().toString();
+        if (!inputText.isEmpty()) {
+            int number = Integer.parseInt(inputText);
+            numbers.add(number); // 배열에 숫자 추가
+            edtNum1.setText(""); // 입력값 초기화
+        }
+    }
+
+    /**
+     * 연산 버튼 눌렀을때 한번더 숫자 저장
+     **/
+    private void relNum() {
+        String inputText = edtNum1.getText().toString();
+        if (!inputText.isEmpty()) {
+            int number = Integer.parseInt(inputText);
+            numbers.add(number); // 배열에 숫자 추가
+        }
+    }
 }
 
 
