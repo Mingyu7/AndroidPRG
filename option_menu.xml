@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/opLogin"
+        android:title="로그인"
+        />
+
+    <item
+        android:id="@+id/opLogout"
+        android:title="로그아웃"
+        />
+
+    <item android:id="@+id/opHome"
+        android:title="HOME"
+        android:icon="@drawable/baseline_home_24"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/opSearch"
+        android:title="Search"
+        android:icon="@drawable/baseline_search_24"
+        app:showAsAction="always"/>
+
+    <item
+        android:title="배경색 변경">
+        <menu>
+            <item
+                android:id="@+id/opRed"
+                android:title="레드"
+                />
+            <item
+                android:id="@+id/opYellow"
+                android:title="엘로우"
+                />
+            <item
+                android:id="@+id/opBlue"
+                android:title="블루"
+                />
+
+
+
+        </menu>
+    </item>
+</menu>
